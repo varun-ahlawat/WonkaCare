@@ -25,7 +25,7 @@ WonkaCare is an AI-powered voice agent for hospitals that aligns with all HIPAA 
 | Charts | Recharts 3 |
 | AI / LLM | Google Gemini 2.5 Flash (Vertex AI) + Google AI Studio fallback |
 | Voice | Vapi AI (`@vapi-ai/server-sdk`) |
-| Database | Supabase (PostgreSQL) |
+| Database | Neon DB |
 | Real-time | Server-Sent Events (SSE) + Node.js EventEmitter |
 | Deployment | Docker → Google Cloud Run |
 
