@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+:root {
+  /* ── Surfaces (widened contrast steps) ── */
+  --bg:             #09090b;
+  --surface:        #121215;
+  --surface2:       #1c1c21;
+  --surface-hover:  #232329;
+
+  /* ── Borders ── */
+  --border:         rgba(255, 255, 255, 0.07);
+  --border-strong:  rgba(255, 255, 255, 0.12);
+
+  /* ── Text ── */
+  --text:           #ececef;
+  --text-secondary: #a1a1aa;
+  --muted:          #63637a;
+
+  /* ── Semantic ── */
+  --danger:         #B12925;
+  --danger-muted:   rgba(177, 41, 37, 0.22);
+  --warning:        #FAA56B;
+  --warning-muted:  rgba(250, 165, 107, 0.18);
+  --success:        #2D7C3E;
+  --success-muted:  rgba(45, 124, 62, 0.22);
+  --info:           #60a5fa;
+  --info-muted:     rgba(96, 165, 250, 0.12);
+
+  /* ── Radius scale ── */
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+
+  /* ── Shadows ── */
+  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md:    0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --ring-focus:   0 0 0 2px var(--bg), 0 0 0 4px rgba(160, 160, 171, 0.2);
+}
+
+/* ── Light mode ── */
+
+[data-theme="light"] {
+  --bg:             #f8f8fa;
+  --surface:        #ffffff;
+  --surface2:       #f0f0f3;
+  --surface-hover:  #e8e8ec;
+
+  --border:         rgba(0, 0, 0, 0.08);
+  --border-strong:  rgba(0, 0, 0, 0.15);
+
+  --text:           #111113;
+  --text-secondary: #55555e;
+  --muted:          #8c8c9a;
+
+  --danger:         #B12925;
+  --danger-muted:   rgba(177, 41, 37, 0.12);
+  --warning:        #FAA56B;
+  --warning-muted:  rgba(250, 165, 107, 0.12);
+  --success:        #2D7C3E;
+  --success-muted:  rgba(45, 124, 62, 0.12);
+  --info:           #2563eb;
+  --info-muted:     rgba(37, 99, 235, 0.08);
+
+  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md:    0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --ring-focus:   0 0 0 2px var(--bg), 0 0 0 4px rgba(37, 99, 235, 0.25);
+}
+
+@theme inline {
+  --color-bg:             var(--bg);
+  --color-surface:        var(--surface);
+  --color-surface2:       var(--surface2);
+  --color-surface-hover:  var(--surface-hover);
+  --color-border:         var(--border);
+  --color-border-strong:  var(--border-strong);
+  --color-text:           var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-muted:          var(--muted);
+  --color-danger:         var(--danger);
+  --color-danger-muted:   var(--danger-muted);
+  --color-warning:        var(--warning);
+  --color-warning-muted:  var(--warning-muted);
+  --color-success:        var(--success);
+  --color-success-muted:  var(--success-muted);
+  --color-info:           var(--info);
+  --color-info-muted:     var(--info-muted);
+  --font-sans:            var(--font-geist-sans);
+  --font-mono:            var(--font-geist-mono);
+}
+
+/* ── Base ── */
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--info-muted);
+  color: var(--text);
+}
+
+/* ── Focus ring utility ── */
+
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+/* ── Page transition ── */
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-enter {
+  animation: page-enter 250ms ease-out both;
+}

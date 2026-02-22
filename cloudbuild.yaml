@@ -1,0 +1,43 @@
+steps:
+  # Build the Docker image tagged with both commit SHA and latest
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - '-t'
+      - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith:$COMMIT_SHA'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith:latest'
+      - '.'
+
+  # Push both tags to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - '--all-tags'
+      - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith'
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - meredith
+      - '--image=us-central1-docker.pkg.dev/evently-486001/meredith/meredith:$COMMIT_SHA'
+      - '--platform=managed'
+      - '--region=us-central1'
+      - '--min-instances=1'
+      - '--max-instances=1'
+      - '--timeout=3600'
+      - '--memory=512Mi'
+      - '--no-cpu-throttling'
+      - '--port=8080'
+      - '--set-secrets=DATABASE_URL=meredith-db-url:latest,VAPI_API_KEY=meredith-vapi-key:latest,GOOGLE_AI_API_KEY=meredith-google-ai-key:latest,VERTEX_API_KEY=meredith-vertex-key:latest'
+      - '--set-env-vars=VAPI_ASSISTANT_ID=275f94ef-8d65-4891-a29f-fffbf0723c5a,VAPI_PHONE_NUMBER_ID=f6a8c918-c5b4-4dde-857a-fb8500330fa6'
+
+images:
+  - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith:$COMMIT_SHA'
+  - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
