@@ -194,16 +194,16 @@ scripts/
 
 ## System Architecture
 
-<img width="7019" height="5660" alt="image" src="https://github.com/user-attachments/assets/950736e4-c975-473d-8cd4-076e0af8e57b" />
+<img width="11476" height="4535" alt="image" src="https://github.com/user-attachments/assets/5c5c05aa-2c3f-4c78-b6e2-d71d7ad2e411" />
 
 ## Database/Schema Models
 
-<!-- TODO: add image -->
+<img width="7019" height="5660" alt="image" src="https://github.com/user-attachments/assets/535a861b-888a-4161-91c7-d283ea3d23d3" />
 
 ## Triage Prioritization Decision Flow
 
-<!-- TODO: add image -->
+<img width="2957" height="8490" alt="image" src="https://github.com/user-attachments/assets/d6ef22cf-e704-48d2-8f74-0feabbd5b7a2" />
 
 ## Call Lifecycle Sequence
 
-<!-- TODO: add image -->
+<img width="5301" height="5728" alt="image" src="https://github.com/user-attachments/assets/a6498e34-fed4-435f-94fb-d62420b3d424" />
