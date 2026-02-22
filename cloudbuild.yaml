@@ -4,9 +4,9 @@ steps:
     args:
       - build
       - '-t'
-      - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith:$COMMIT_SHA'
+      - 'us-central1-docker.pkg.dev/evently-486001/wonkacare/wonkacare:$COMMIT_SHA'
       - '-t'
-      - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith:latest'
+      - 'us-central1-docker.pkg.dev/evently-486001/wonkacare/wonkacare:latest'
       - '.'
 
   # Push both tags to Artifact Registry
@@ -14,7 +14,7 @@ steps:
     args:
       - push
       - '--all-tags'
-      - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith'
+      - 'us-central1-docker.pkg.dev/evently-486001/wonkacare/wonkacare'
 
   # Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -22,8 +22,8 @@ steps:
     args:
       - run
       - deploy
-      - meredith
-      - '--image=us-central1-docker.pkg.dev/evently-486001/meredith/meredith:$COMMIT_SHA'
+      - wonkacare
+      - '--image=us-central1-docker.pkg.dev/evently-486001/wonkacare/wonkacare:$COMMIT_SHA'
       - '--platform=managed'
       - '--region=us-central1'
       - '--min-instances=1'
@@ -36,8 +36,8 @@ steps:
       - '--set-env-vars=VAPI_ASSISTANT_ID=275f94ef-8d65-4891-a29f-fffbf0723c5a,VAPI_PHONE_NUMBER_ID=f6a8c918-c5b4-4dde-857a-fb8500330fa6'
 
 images:
-  - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith:$COMMIT_SHA'
-  - 'us-central1-docker.pkg.dev/evently-486001/meredith/meredith:latest'
+  - 'us-central1-docker.pkg.dev/evently-486001/wonkacare/wonkacare:$COMMIT_SHA'
+  - 'us-central1-docker.pkg.dev/evently-486001/wonkacare/wonkacare:latest'
 
 options:
   logging: CLOUD_LOGGING_ONLY
