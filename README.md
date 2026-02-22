@@ -1,4 +1,4 @@
-# WonkaCare
+# WonkaCare 🍭
 
 AI-powered hospital voice agent that answers every patient call, conducts real-time medical triage, and routes emergencies to a nurse's phone in seconds no hold, no voicemail. Built with HIPAA-aligned architecture from day one.
 
