@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { TranscriptLine, TriageLevel } from './mock-call-logs';
 import type { ExistingPatientContext } from './db';
+import { isOllamaEnabled, ollamaGenerate } from './ollama';
 
 /* ── Vertex AI helper ───────────────────────────────── */
 // Vertex AI uses a different endpoint and auth from Google AI Studio.
@@ -180,10 +181,13 @@ export async function extractCallProfile(
   const prompt = buildEndOfCallPrompt(existingPatient);
 
   try {
-    const rawText = await vertexGenerate([
+    const parts = [
       { text: prompt },
       { text: `TRANSCRIPT:\n${transcriptText}` },
-    ]);
+    ];
+    const rawText = isOllamaEnabled()
+      ? await ollamaGenerate(parts)
+      : await vertexGenerate(parts);
 
     const jsonStr = rawText.trim().replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
     const p = JSON.parse(jsonStr);
@@ -306,12 +310,27 @@ export async function summarizeTranscript(
     .map((l) => `[${l.timestamp}] ${l.speaker}: ${l.text}`)
     .join('\n');
 
+  const parts = [
+    { text: SYSTEM_PROMPT },
+    { text: `TRANSCRIPT:\n${transcriptText}` },
+  ];
+
+  // Use local Ollama when AI_PROVIDER=ollama
+  if (isOllamaEnabled()) {
+    try {
+      const rawText = await ollamaGenerate(parts);
+      const jsonStr = rawText.trim().replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
+      const parsed = JSON.parse(jsonStr);
+      return parseSummary(parsed);
+    } catch (err) {
+      console.error('[Ollama] summarizeTranscript failed:', err);
+      return null;
+    }
+  }
+
   // Try Vertex AI first; fall back to Google AI Studio
   try {
-    const rawText = await vertexGenerate([
-      { text: SYSTEM_PROMPT },
-      { text: `TRANSCRIPT:\n${transcriptText}` },
-    ]);
+    const rawText = await vertexGenerate(parts);
     const jsonStr = rawText.trim().replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
     const parsed = JSON.parse(jsonStr);
     return parseSummary(parsed);
@@ -321,10 +340,7 @@ export async function summarizeTranscript(
 
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const result = await model.generateContent([
-      { text: SYSTEM_PROMPT },
-      { text: `TRANSCRIPT:\n${transcriptText}` },
-    ]);
+    const result = await model.generateContent(parts);
     const text = result.response.text().trim();
     const jsonStr = text.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
     const parsed = JSON.parse(jsonStr);
