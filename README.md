@@ -1,18 +1,18 @@
 # WonkaCare
 
-AI-powered hospital voice agent that answers every patient call, conducts real-time medical triage, and routes emergencies to a nurse's phone in seconds — no hold, no voicemail. Built with HIPAA-aligned architecture from day one.
+AI-powered hospital voice agent that answers every patient call, conducts real-time medical triage, and routes emergencies to a nurse's phone in seconds no hold, no voicemail. Built with HIPAA-aligned architecture from day one.
 
 ## Inspiration
 
-Our teammate Shwejan's friend was spiked at a bar late at night. She called Shwejan, but he was 90 minutes away. He called 911 and had to explain the situation three times to three different operators. Every re-explanation burned critical minutes. The problem wasn't the paramedics — it was the handoff. Context gets lost between every caller, dispatcher, nurse, and doctor. Hospitals miss 1 in 3 calls, and 85% of those patients never call back. This made us realize how every second matters, which is why we built WonkaCare.
+Our teammate Shwejan's friend was spiked at a bar late at night. She called Shwejan, but he was 90 minutes away. He called 911 and had to explain the situation three times to three different operators. Every re-explanation burned critical minutes. The problem wasn't the paramedics   it was the handoff. Context gets lost between every caller, dispatcher, nurse, and doctor. Hospitals miss 1 in 3 calls, and 85% of those patients never call back. This made us realize how every second matters, which is why we built WonkaCare.
 
 ## What It Does
 
-WonkaCare is an AI-powered voice agent for hospitals that aligns with all HIPAA requirements. It answers every patient call, conducts real-time medical triage, and routes emergencies to a nurse's phone in seconds — no hold, no voicemail.
+WonkaCare is an AI-powered voice agent for hospitals that aligns with all HIPAA requirements. It answers every patient call, conducts real-time medical triage, and routes emergencies to a nurse's phone in seconds   no hold, no voicemail.
 
-- **Non-urgent calls** get a full AI-generated summary with symptoms and risk flags delivered to a triage operator's dashboard — without a human ever picking up.
-- **Doctors** get a dedicated dashboard with the patient's full context — call transcript, AI triage summary, medical history, medications, test results — ready before they walk into the room.
-- **Epidemiological analytics** — every call feeds structured data (symptoms, zip codes, timestamps) into an outbreak detection engine that catches geographic hotspots, symptom velocity spikes, and cluster patterns. A single heart attack is a medical event. Fourteen in one zip code is a public health emergency — and WonkaCare catches it in hours, not weeks.
+- **Non-urgent calls** get a full AI-generated summary with symptoms and risk flags delivered to a triage operator's dashboard   without a human ever picking up.
+- **Doctors** get a dedicated dashboard with the patient's full context   call transcript, AI triage summary, medical history, medications, test results   ready before they walk into the room.
+- **Epidemiological analytics**   every call feeds structured data (symptoms, zip codes, timestamps) into an outbreak detection engine that catches geographic hotspots, symptom velocity spikes, and cluster patterns. A single heart attack is a medical event. Fourteen in one zip code is a public health emergency   and WonkaCare catches it in hours, not weeks.
 
 ## Tech Stack
 
@@ -33,13 +33,13 @@ WonkaCare is an AI-powered voice agent for hospitals that aligns with all HIPAA 
 
 ### Voice Pipeline
 
-Patient calls come through **Vapi**, which streams live webhook events (`transcript`, `conversation-update`, `status-update`, `end-of-call-report`) to our backend. The webhook processes transcript segments and status updates into a **LiveCallStore** — an EventEmitter-based in-memory singleton managing all active call state. The store reconciles out-of-order Vapi events using a sync layer with safety guards to prevent transcript data loss.
+Patient calls come through **Vapi**, which streams live webhook events (`transcript`, `conversation-update`, `status-update`, `end-of-call-report`) to our backend. The webhook processes transcript segments and status updates into a **LiveCallStore**   an EventEmitter-based in-memory singleton managing all active call state. The store reconciles out-of-order Vapi events using a sync layer with safety guards to prevent transcript data loss.
 
 ### AI Triage
 
-Transcripts are sent to **Gemini 2.5 Flash** with a medical triage prompt. During live calls, a lightweight summarizer extracts patient info, symptoms, risk flags, triage level (`HIGH` / `MED` / `LOW`), and a recommended action — streaming updates to the dashboard in real time.
+Transcripts are sent to **Gemini 2.5 Flash** with a medical triage prompt. During live calls, a lightweight summarizer extracts patient info, symptoms, risk flags, triage level (`HIGH` / `MED` / `LOW`), and a recommended action   streaming updates to the dashboard in real time.
 
-At end-of-call, a comprehensive extraction pipeline runs against the full transcript and any existing patient records. Gemini returns structured JSON covering the call (triage level, chief complaint, symptoms, risk flags, recommendation), the patient profile (demographics, allergies, conditions, medications, prior episodes), and a detailed encounter record (symptom severity, onset, outcome). For returning patients, the prompt includes their existing medical record so Gemini merges — never overwrites — existing data.
+At end-of-call, a comprehensive extraction pipeline runs against the full transcript and any existing patient records. Gemini returns structured JSON covering the call (triage level, chief complaint, symptoms, risk flags, recommendation), the patient profile (demographics, allergies, conditions, medications, prior episodes), and a detailed encounter record (symptom severity, onset, outcome). For returning patients, the prompt includes their existing medical record so Gemini merges   never overwrites   existing data.
 
 ### Real-time Streaming
 
@@ -47,7 +47,7 @@ The triage dashboard receives updates via **Server-Sent Events** (SSE). A custom
 
 ### Emergency Routing
 
-HIGH triage calls trigger an automated forward to a nurse's phone in under 30 seconds — fully automated, no human dispatcher needed.
+HIGH triage calls trigger an automated forward to a nurse's phone in under 30 seconds   fully automated, no human dispatcher needed.
 
 ### Epidemiological Analytics
 
@@ -98,8 +98,8 @@ Six tables in Supabase (PostgreSQL), created via `scripts/setup-db.ts`:
 
 | Table | Purpose |
 |---|---|
-| `patients` | Patient profiles — demographics, allergies, conditions (JSONB), medications (JSONB), prior episodes. Lookup by phone number. |
-| `calls` | One row per Vapi call — full transcript (JSONB), AI summary fields, status, triage level, FK to patient. |
+| `patients` | Patient profiles   demographics, allergies, conditions (JSONB), medications (JSONB), prior episodes. Lookup by phone number. |
+| `calls` | One row per Vapi call   full transcript (JSONB), AI summary fields, status, triage level, FK to patient. |
 | `encounters` | One per call; linked to patient and call. Structured symptoms with severity, onset, and outcome. |
 | `timeline_events` | Append-only audit trail per patient (calls, visits, medications, notes, escalations, tests). |
 | `doctor_notes` | Provider notes per patient with author attribution. |
@@ -108,10 +108,10 @@ Six tables in Supabase (PostgreSQL), created via `scripts/setup-db.ts`:
 ## HIPAA Alignment
 
 - Phone numbers are masked in the UI (`***-***-****` until authenticated)
-- Raw audio never persists on our servers — only AI-extracted structured data
+- Raw audio never persists on our servers   only AI-extracted structured data
 - The in-memory `LiveCallStore` doesn't write PHI to disk
 - Architecture designed for production HIPAA constraints: E2E encryption, BAAs, audit logging
-- Patient records use merge semantics — AI extraction never overwrites existing medical history
+- Patient records use merge semantics   AI extraction never overwrites existing medical history
 
 ## Setup
 
@@ -155,7 +155,7 @@ src/
 │   ├── api/patients/route.ts           # Patient list API
 │   └── api/seed/route.ts               # Demo data seeder
 ├── lib/
-│   ├── live-calls.ts                    # LiveCallStore — in-memory call state + AI summarization
+│   ├── live-calls.ts                    # LiveCallStore   in-memory call state + AI summarization
 │   ├── gemini.ts                        # Gemini 2.5 Flash (Vertex AI + Google AI Studio)
 │   ├── db.ts                            # Supabase client + all DB operations
 │   ├── epi-data.ts                      # Epidemiological cluster simulation
@@ -165,7 +165,7 @@ src/
 │   ├── format.ts                        # Time/duration formatters
 │   └── theme.tsx                        # Dark/light theme provider
 ├── hooks/
-│   └── use-live-calls.ts                # React hook — consumes SSE stream
+│   └── use-live-calls.ts                # React hook   consumes SSE stream
 └── components/
     ├── ui/                              # Primitive UI components
     ├── doctor/                          # Doctor portal components
@@ -181,16 +181,16 @@ scripts/
 
 ## Challenges
 
-- **Call state management** — Vapi sends events out of order (fragments, full syncs, abrupt endings). We built a reconciliation layer with safety guards and debounced AI summarization to keep state consistent without hammering the Gemini API.
-- **HIPAA compliance** — Phone numbers are masked, raw audio never persists, and the in-memory store doesn't write PHI to disk. We designed around production HIPAA constraints from day one.
-- **Real-time concurrency** — Race conditions between webhook events, SSE streams, and Gemini API calls required careful debouncing, state reconciliation, and fire-and-forget patterns with two-phase DB writes (save transcript immediately, then update with AI extraction).
+- **Call state management**   Vapi sends events out of order (fragments, full syncs, abrupt endings). We built a reconciliation layer with safety guards and debounced AI summarization to keep state consistent without hammering the Gemini API.
+- **HIPAA compliance**   Phone numbers are masked, raw audio never persists, and the in-memory store doesn't write PHI to disk. We designed around production HIPAA constraints from day one.
+- **Real-time concurrency**   Race conditions between webhook events, SSE streams, and Gemini API calls required careful debouncing, state reconciliation, and fire-and-forget patterns with two-phase DB writes (save transcript immediately, then update with AI extraction).
 
 ## What's Next
 
-- **Low-resource regions** — Where there's one doctor per ten thousand people, WonkaCare becomes the triage system they never had
-- **Multilingual support** — Critical for developing countries where patients don't speak the dominant language
-- **EHR integration** — Connect to Epic/Cerner so the doctor dashboard pulls real patient records
-- **County health department alerts** — Automatically notify public health officials when outbreak thresholds are crossed
+- **Low-resource regions**   Where there's one doctor per ten thousand people, WonkaCare becomes the triage system they never had
+- **Multilingual support**   Critical for developing countries where patients don't speak the dominant language
+- **EHR integration**   Connect to Epic/Cerner so the doctor dashboard pulls real patient records
+- **County health department alerts**   Automatically notify public health officials when outbreak thresholds are crossed
 
 ## System Architecture
 
